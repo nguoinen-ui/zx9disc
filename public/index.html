@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trắc nghiệm DISC</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🧠 TRẮC NGHIỆM DISC</h1>
+            <p class="subhead">Khám phá tính cách của bạn</p>
+        </div>
+
+        <!-- Form nhập tên -->
+        <div id="nameForm" class="card">
+            <div class="form-group">
+                <label>👤 Họ và tên của bạn</label>
+                <input type="text" id="userName" placeholder="Nhập họ tên..." required>
+                <button id="startQuizBtn" class="btn-primary">Bắt đầu làm bài</button>
+            </div>
+        </div>
+
+        <!-- Phần câu hỏi -->
+        <div id="quizSection" style="display: none;">
+            <div class="progress-wrapper">
+                <div class="progress-bar">
+                    <div id="progressFill" style="width: 0%"></div>
+                </div>
+                <span id="progressText">0/112</span>
+            </div>
+            
+            <div id="quizWrapper"></div>
+
+            <div class="action-bar">
+                <button id="calculateBtn" class="btn-primary">📊 Tính điểm</button>
+                <button id="resetBtn" class="btn-secondary">🔄 Làm lại</button>
+            </div>
+        </div>
+
+        <!-- Kết quả -->
+        <div id="resultArea" class="card" style="display: none;">
+            <h2>📋 Kết quả của bạn</h2>
+            <div id="userResultName" class="result-name"></div>
+            
+            <div class="chart-container">
+                <div class="chart-item">
+                    <div class="chart-bar" id="barD">0</div>
+                    <span>D</span>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-bar" id="barI">0</div>
+                    <span>I</span>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-bar" id="barS">0</div>
+                    <span>S</span>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-bar" id="barC">0</div>
+                    <span>C</span>
+                </div>
+            </div>
+            
+            <div id="scoreDetail"></div>
+            <div id="submitStatus" class="submit-status"></div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>

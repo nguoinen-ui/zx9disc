@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trắc nghiệm DISC</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #2563eb;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-500: #64748b;
+            --gray-700: #334155;
+            --gray-900: #0f172a;
+        }
+        body {
+            font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%);
+            min-height: 100vh;
+            padding: 12px;
+            padding-bottom: 80px;
+            color: var(--gray-900);
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .header { text-align: center; padding: 12px 0 8px; }
+        .header h1 { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+        .header .subhead { font-size: 0.9rem; color: var(--gray-500); margin-top: 2px; }
+        .card { background: white; border-radius: 16px; padding: 20px; margin-top: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .form-group { display: flex; flex-direction: column; gap: 12px; }
+        .form-group label { font-weight: 600; color: var(--gray-700); font-size: 0.95rem; }
+        .form-group input { padding: 14px 16px; border: 2px solid var(--gray-200); border-radius: 12px; font-size: 1rem; outline: none; }
+        .form-group input:focus { border-color: var(--primary); }
+        .btn-primary, .btn-secondary {
+            border: none; padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 1rem;
+            cursor: pointer; width: 100%; touch-action: manipulation;
+        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-secondary { background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200); }
+        .progress-wrapper { display: flex; align-items: center; gap: 12px; margin: 8px 0 16px; }
+        .progress-bar { flex: 1; height: 6px; background: var(--gray-200); border-radius: 10px; overflow: hidden; }
+        #progressFill { height: 100%; background: linear-gradient(90deg, var(--primary), #818cf8); transition: width 0.3s; border-radius: 10px; }
+        #progressText { font-size: 0.8rem; color: var(--gray-500); font-weight: 600; }
+        .question-block { background: white; border-radius: 16px; padding: 16px; margin-bottom: 12px; border-left: 4px solid var(--primary); }
+        .question-number { font-weight: 700; color: var(--primary); font-size: 0.8rem; margin-bottom: 10px; display: block; }
+        .trait-item { padding: 10px 0; border-bottom: 1px solid var(--gray-100); }
+        .trait-item:last-child { border-bottom: none; }
+        .trait-word { font-size: 0.9rem; font-weight: 500; color: var(--gray-700); margin-bottom: 6px; }
+        .trait-word .code { display: inline-block; background: var(--gray-200); padding: 0 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; color: var(--gray-500); margin-right: 6px; }
+        .trait-options { display: flex; gap: 8px; }
+        .trait-options label { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; border-radius: 10px; background: var(--gray-50); border: 2px solid var(--gray-200); cursor: pointer; font-size: 0.85rem; font-weight: 500; }
+        .trait-options label:active { transform: scale(0.97); }
+        .trait-options input[type="radio"] { display: none; }
+        .trait-options label:has(input:checked) { border-color: var(--primary); background: #eff6ff; }
+        .trait-options .nhiều:has(input:checked) { border-color: var(--success); background: #f0fdf4; color: var(--success); }
+        .trait-options .ít:has(input:checked) { border-color: var(--danger); background: #fef2f2; color: var(--danger); }
+        .action-bar { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+        .chart-container { display: flex; align-items: flex-end; justify-content: space-around; height: 200px; padding: 10px 0; gap: 12px; }
+        .chart-item { display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .chart-bar { width: 100%; max-width: 60px; min-height: 40px; border-radius: 8px 8px 4px 4px; text-align: center; font-weight: 700; font-size: 0.9rem; color: white; display: flex; align-items: center; justify-content: center; transition: height 0.6s; }
+        .chart-item span { margin-top: 6px; font-weight: 700; font-size: 0.9rem; color: var(--gray-500); }
+        #barD { background: #ef4444; }
+        #barI { background: #f59e0b; }
+        #barS { background: #22c55e; }
+        #barC { background: #3b82f6; }
+        #scoreDetail { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-200); }
+        .score-item { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; font-weight: 600; padding: 8px 12px; background: var(--gray-50); border-radius: 10px; }
+        .score-item .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .result-name { text-align: center; font-size: 1.1rem; font-weight: 600; color: var(--gray-700); padding: 8px; background: var(--gray-50); border-radius: 10px; margin-bottom: 12px; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--gray-900); color: white; padding: 12px 24px; border-radius: 12px; font-size: 0.9rem; font-weight: 500; opacity: 0; transition: all 0.3s; max-width: 90%; text-align: center; z-index: 999; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        @media (max-width: 480px) { .card { padding: 16px; } .trait-options label { font-size: 0.8rem; padding: 6px 10px; } .chart-container { height: 160px; } #scoreDetail { grid-template-columns: 1fr 1fr; gap: 6px; } .score-item { font-size: 0.85rem; padding: 6px 10px; } }
+        .save-info { text-align: center; margin-top: 12px; padding: 10px; border-radius: 10px; font-weight: 500; font-size: 0.9rem; background: #f0fdf4; color: var(--success); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🧠 TRẮC NGHIỆM DISC</h1>
+        <p class="subhead">Khám phá tính cách của bạn</p>
+    </div>
+
+    <!-- Form nhập tên -->
+    <div id="nameForm" class="card">
+        <div class="form-group">
+            <label>👤 Họ và tên của bạn</label>
+            <input type="text" id="userName" placeholder="Nhập họ tên..." required>
+            <button id="startQuizBtn" class="btn-primary">Bắt đầu làm bài</button>
+        </div>
+    </div>
+
+    <!-- Phần câu hỏi -->
+    <div id="quizSection" style="display: none;">
+        <div class="progress-wrapper">
+            <div class="progress-bar"><div id="progressFill" style="width: 0%"></div></div>
+            <span id="progressText">0/112</span>
+        </div>
+        <div id="quizWrapper"></div>
+        <div class="action-bar">
+            <button id="calculateBtn" class="btn-primary">📊 Tính điểm</button>
+            <button id="resetBtn" class="btn-secondary">🔄 Làm lại</button>
+        </div>
+    </div>
+
+    <!-- Kết quả -->
+    <div id="resultArea" class="card" style="display: none;">
+        <h2>📋 Kết quả của bạn</h2>
+        <div id="userResultName" class="result-name"></div>
+        <div class="chart-container">
+            <div class="chart-item"><div class="chart-bar" id="barD">0</div><span>D</span></div>
+            <div class="chart-item"><div class="chart-bar" id="barI">0</div><span>I</span></div>
+            <div class="chart-item"><div class="chart-bar" id="barS">0</div><span>S</span></div>
+            <div class="chart-item"><div class="chart-bar" id="barC">0</div><span>C</span></div>
+        </div>
+        <div id="scoreDetail"></div>
+        <div id="saveStatus" class="save-info">✅ Kết quả đã được lưu trên máy bạn</div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+</div>
+<script>
+// ===== DỮ LIỆU CÂU HỎI (28 câu) =====
+const questions = [
+    { id: 1, traits: [
+        { word: 'Enthusiastic: hăng hái, nhiệt tình, say mê', code: 'A' },
+        { word: 'Daring: táo bạo, cả gan', code: 'O' },
+        { word: 'Diplomatic: có tài ngoại giao', code: 'P' },
+        { word: 'Satisfied: dễ thỏa mãn', code: 'B' }
+    ]},
+    { id: 2, traits: [
+        { word: 'Poised: đình đạc, tự chủ, bình tĩnh', code: 'A' },
+        { word: 'Observant: hay quan sát, tinh ý', code: 'P' },
+        { word: 'Modest: khiêm tốn, nhún nhường', code: 'B' },
+        { word: 'Impatient: không có kiên nhẫn', code: 'O' }
+    ]},
+    { id: 3, traits: [
+        { word: 'Cautious: thận trọng, cẩn trọng', code: 'P' },
+        { word: 'Determined: quả quyết, kiên quyết', code: 'O' },
+        { word: 'Tactful: khéo ứng xử, lịch thiệp', code: 'P' },
+        { word: 'Agreeable: sẵn sàng tán thành, đồng ý', code: 'B' }
+    ]},
+    { id: 4, traits: [
+        { word: 'Convincing: có sức thuyết phục', code: 'A' },
+        { word: 'Good natured: có tính thiện, bản chất tốt', code: 'B' },
+        { word: 'Magnetic: có sức hấp dẫn, lôi cuốn', code: 'A' },
+        { word: 'Insistent: cương quyết', code: 'O' }
+    ]},
+    { id: 5, traits: [
+        { word: 'Friendly: thân thiện', code: 'A' },
+        { word: 'Accurate: chính đáng, xác đáng', code: 'P' },
+        { word: 'Brave: can đảm', code: 'O' },
+        { word: 'Inspiring: gây cảm hứng', code: 'A' }
+    ]},
+    { id: 6, traits: [
+        { word: 'Outspoken: nói thẳng, trực tính', code: 'O' },
+        { word: 'Calm: diễm tĩnh', code: 'N' },
+        { word: 'Submissive: dễ phục tùng', code: 'B' },
+        { word: 'Timid: nhút nhát', code: 'N' }
+    ]},
+    { id: 7, traits: [
+        { word: 'Talkative: nói nhiều', code: 'A' },
+        { word: 'Controlled: có kiểm soát, tiết chế', code: 'P' },
+        { word: 'Reserved: kín đáo, dè dặt', code: 'P' },
+        { word: 'Obliging: sẵn lòng giúp đỡ', code: 'B' }
+    ]},
+    { id: 8, traits: [
+        { word: 'Conventional: nói theo thói quen', code: 'B' },
+        { word: 'Decisive: kiên quyết, quả quyết, dứt khoát', code: 'O' },
+        { word: 'Strong-willed: cứng còi, kiên quyết', code: 'O' },
+        { word: 'Cheerful: vui vẻ, tươi cười', code: 'A' }
+    ]},
+    { id: 9, traits: [
+        { word: 'Adventurous: liều lĩnh, thích phiêu lưu, mạo hiểm', code: 'O' },
+        { word: 'Insightful: sâu sắc, sáng suốt', code: 'P' },
+        { word: 'Stimulating: kích thích, khuyến khích', code: 'A' },
+        { word: 'Kind: từ tế', code: 'B' }
+    ]},
+    { id: 10, traits: [
+        { word: 'Out-going: dễ gần, thoải mái, chan hòa', code: 'A' },
+        { word: 'Moderate: ôn hòa', code: 'B' },
+        { word: 'Perceptive: dễ cảm thụ', code: 'P' },
+        { word: 'Independent: độc lập', code: 'O' }
+    ]},
+    { id: 11, traits: [
+        { word: 'Gentle: hòa nhã, nhẹ nhàng, lịch sự', code: 'B' },
+        { word: 'Persuasive: có tài thuyết phục', code: 'A' },
+        { word: 'Competitive: cạnh tranh', code: 'O' },
+        { word: 'Considerate: ân cần, chu đáo', code: 'B' }
+    ]},
+    { id: 12, traits: [
+        { word: 'Humble: khiêm nhường', code: 'N' },
+        { word: 'Original: độc đáo, lập dị', code: 'N' },
+        { word: 'Joyful: mang lại niềm vui', code: 'A' },
+        { word: 'Private: ấn dật, cách biệt', code: 'P' }
+    ]},
+    { id: 13, traits: [
+        { word: 'Expressive: diễn cảm', code: 'A' },
+        { word: 'Conscientious: tận tâm, chu đáo, tỉ mỉ', code: 'P' },
+        { word: 'Fussy: nhắng nhít, cầu kỳ, kiều cách', code: 'P' },
+        { word: 'Obedient: vâng lời, dễ bảo', code: 'B' }
+    ]},
+    { id: 14, traits: [
+        { word: 'Dominant: lấn át, thống trị', code: 'O' },
+        { word: 'Responsive: đáp ứng nhiệt tình, phản ứng nhanh', code: 'N' },
+        { word: 'Firm: kiên quyết', code: 'O' },
+        { word: 'Playful: hay nghịch', code: 'A' }
+    ]},
+    { id: 15, traits: [
+        { word: 'Attractive: cuốn hút', code: 'A' },
+        { word: 'Introspective: nội tâm', code: 'N' },
+        { word: 'Impulsive: bốc đồng', code: 'A' },
+        { word: 'Introverted: hướng nội', code: 'P' }
+    ]},
+    { id: 16, traits: [
+        { word: 'Stubborn: cứng đầu', code: 'O' },
+        { word: 'Predictable: dễ đoán', code: 'B' },
+        { word: 'Forceful: mạnh mẽ, sinh động, đầy sức thuyết phục', code: 'O' },
+        { word: 'Easy-going: dễ dài', code: 'B' }
+    ]},
+    { id: 17, traits: [
+        { word: 'Logical: suy nghĩ theo logic', code: 'P' },
+        { word: 'Bold: táo bạo, dũng cảm', code: 'O' },
+        { word: 'Good mixer: giao thiệp tốt', code: 'A' },
+        { word: 'Refined: lịch sự, tao nhã', code: 'P' }
+    ]},
+    { id: 18, traits: [
+        { word: 'Loyal: trung thành', code: 'B' },
+        { word: 'Charming: duyên dáng, quyến rũ', code: 'A' },
+        { word: 'Vigorous: mãnh liệt', code: 'O' },
+        { word: 'Lenient: hiền hậu, khoan dung', code: 'B' }
+    ]},
+    { id: 19, traits: [
+        { word: 'Sociable: dễ gần, chan hòa', code: 'A' },
+        { word: 'Patient: kiên nhẫn', code: 'B' },
+        { word: 'Captivating: hấp dẫn, quyến rũ', code: 'A' },
+        { word: 'Contented: dễ chấp nhận, dễ hài lòng, thỏa mãn', code: 'B' }
+    ]},
+    { id: 20, traits: [
+        { word: 'Self-reliant: tự lực', code: 'O' },
+        { word: 'Soft spoken: nói năng nhẹ nhàng', code: 'P' },
+        { word: 'Demanding: đòi hỏi khắt khe', code: 'O' },
+        { word: 'Compliant: hay phục tùng', code: 'P' }
+    ]},
+    { id: 21, traits: [
+        { word: 'Willing: có thiện ý, hay giúp đỡ', code: 'B' },
+        { word: 'Eager: hãm hở, nhiệt tình', code: 'O' },
+        { word: 'Argumentative: hay tranh cãi', code: 'O' },
+        { word: 'Systematic: làm việc có phương pháp, có hệ thống', code: 'P' }
+    ]},
+    { id: 22, traits: [
+        { word: 'Thorough: cẩn thận, tỉ mỉ', code: 'P' },
+        { word: 'High-spirited: cao thượng', code: 'A' },
+        { word: 'Cooperative: thiên về hướng hợp tác', code: 'B' },
+        { word: 'Light-hearted: vô tư lự, thư thái', code: 'A' }
+    ]},
+    { id: 23, traits: [
+        { word: 'Aggressive: xông xáo, năng nổ', code: 'O' },
+        { word: 'Extroverted: dễ gần, chan hòa', code: 'A' },
+        { word: 'Jovial: vui vẻ, vui tính', code: 'A' },
+        { word: 'Precise: đòi hỏi chính xác', code: 'P' }
+    ]},
+    { id: 24, traits: [
+        { word: 'Amiable: dễ kết bạn', code: 'B' },
+        { word: 'Fearful: e ngại', code: 'N' },
+        { word: 'Direct: thẳng thắn, đích thân làm', code: 'O' },
+        { word: 'Even-tempered: điền đạm, bình thản', code: 'B' }
+    ]},
+    { id: 25, traits: [
+        { word: 'Confident: tự tin', code: 'A' },
+        { word: 'Sympathetic: dễ cảm thông', code: 'B' },
+        { word: 'Restless: luôn không yên, hiểu động', code: 'O' },
+        { word: 'Neighborly: thuận hòa với bạn bè, mọi người', code: 'B' }
+    ]},
+    { id: 26, traits: [
+        { word: 'Impartial: công bằng, không thiên vị', code: 'N' },
+        { word: 'Assertive: quả quyết, quyết đoán', code: 'O' },
+        { word: 'Appealing: lôi cuốn, quyến rũ', code: 'A' },
+        { word: 'Careful: quan tâm, lo lắng đến người khác', code: 'P' }
+    ]},
+    { id: 27, traits: [
+        { word: 'Well-disciplined: có kỉ luật tốt', code: 'P' },
+        { word: 'Generous: rộng lượng, hào phóng', code: 'B' },
+        { word: 'Respectful: luôn tôn trọng người khác', code: 'P' },
+        { word: 'Pioneering: đảm nhiệm vai trò tiên phong', code: 'O' }
+    ]},
+    { id: 28, traits: [
+        { word: 'Animated: sôi nổi, đầy sinh khí', code: 'A' },
+        { word: 'Persistent: bền bỉ', code: 'O' },
+        { word: 'Optimistic: luôn lạc quan', code: 'A' },
+        { word: 'Helpful: hay giúp đỡ', code: 'B' }
+    ]}
+];
+
+let currentUser = '';
+
+// Toast
+function showToast(msg, type = 'info') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type + ' show';
+    clearTimeout(t._timeout);
+    t._timeout = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// Render câu hỏi
+function renderQuestions() {
+    const wrapper = document.getElementById('quizWrapper');
+    wrapper.innerHTML = '';
+    questions.forEach((q, idx) => {
+        let html = `<div class="question-block"><span class="question-number">Câu ${idx + 1}</span>`;
+        q.traits.forEach((t, ti) => {
+            const name = `q${idx}_${ti}`;
+            html += `
+                <div class="trait-item">
+                    <div class="trait-word"><span class="code">${t.code}</span> ${t.word}</div>
+                    <div class="trait-options">
+                        <label class="nhiều"><input type="radio" name="${name}" value="nhiều" data-code="${t.code}" onchange="updateProgress()"> Nhiều</label>
+                        <label class="ít"><input type="radio" name="${name}" value="ít" data-code="${t.code}" onchange="updateProgress()"> Ít</label>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        wrapper.innerHTML += html;
+    });
+}
+
+// Cập nhật tiến trình
+function updateProgress() {
+    const total = document.querySelectorAll('input[type="radio"]').length;
+    const done = document.querySelectorAll('input[type="radio"]:checked').length;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = done + '/' + total;
+}
+
+// Lưu vào localStorage
+function saveToLocalStorage(result) {
+    const allResults = JSON.parse(localStorage.getItem('disc_results') || '[]');
+    // Kiểm tra xem user đã có chưa
+    const idx = allResults.findIndex(r => r.name === result.name);
+    if (idx !== -1) {
+        allResults[idx] = result;
+    } else {
+        allResults.push(result);
+    }
+    localStorage.setItem('disc_results', JSON.stringify(allResults));
+    document.getElementById('saveStatus').textContent = '✅ Đã lưu kết quả! (Admin có thể xem)';
+    document.getElementById('saveStatus').style.display = 'block';
+}
+
+// Tính điểm
+function calculateScores() {
+    const radios = document.querySelectorAll('input[type="radio"]');
+    const selected = {};
+    let totalSelected = 0;
+    radios.forEach(r => {
+        if (r.checked) {
+            const name = r.name;
+            if (!selected[name]) selected[name] = [];
+            selected[name].push({ code: r.dataset.code, label: r.value });
+            totalSelected++;
+        }
+    });
+
+    const totalTraits = questions.length * 4;
+    if (totalSelected < totalTraits) {
+        showToast(`⚠️ Bạn mới chọn ${totalSelected}/${totalTraits}`, 'error');
+        return null;
+    }
+
+    const nhiều = { O: 0, A: 0, B: 0, P: 0, N: 0 };
+    const ít = { O: 0, A: 0, B: 0, P: 0, N: 0 };
+    for (const key in selected) {
+        const items = selected[key];
+        if (items.length === 1) {
+            const item = items[0];
+            if (item.label === 'nhiều') nhiều[item.code] = (nhiều[item.code] || 0) + 1;
+            else ít[item.code] = (ít[item.code] || 0) + 1;
+        }
+    }
+
+    return {
+        name: currentUser,
+        D: nhiều.O - ít.O,
+        I: nhiều.A - ít.A,
+        S: nhiều.B - ít.B,
+        C: nhiều.P - ít.P,
+        timestamp: new Date().toLocaleString('vi-VN')
+    };
+}
+
+// Hiển thị kết quả
+function displayResult(r) {
+    document.getElementById('resultArea').style.display = 'block';
+    document.getElementById('quizSection').style.display = 'none';
+    document.getElementById('userResultName').textContent = '👤 ' + r.name;
+
+    const maxVal = Math.max(r.D, r.I, r.S, r.C, 5);
+    const hf = 160 / maxVal;
+    ['D', 'I', 'S', 'C'].forEach(k => {
+        const bar = document.getElementById('bar' + k);
+        const h = Math.max(40, r[k] * hf + 20);
+        bar.style.height = h + 'px';
+        bar.textContent = r[k];
+    });
+
+    document.getElementById('scoreDetail').innerHTML = `
+        <div class="score-item"><span class="dot" style="background:#ef4444;"></span> D: ${r.D}</div>
+        <div class="score-item"><span class="dot" style="background:#f59e0b;"></span> I: ${r.I}</div>
+        <div class="score-item"><span class="dot" style="background:#22c55e;"></span> S: ${r.S}</div>
+        <div class="score-item"><span class="dot" style="background:#3b82f6;"></span> C: ${r.C}</div>
+    `;
+}
+
+// Reset
+function resetQuiz() {
+    if (confirm('Làm lại?')) {
+        document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+        document.getElementById('resultArea').style.display = 'none';
+        document.getElementById('quizSection').style.display = 'block';
+        document.getElementById('saveStatus').style.display = 'none';
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+// ===== KHỞI TẠO =====
+document.addEventListener('DOMContentLoaded', () => {
+    renderQuestions();
+    updateProgress();
+
+    document.getElementById('startQuizBtn').addEventListener('click', () => {
+        const name = document.getElementById('userName').value.trim();
+        if (!name) { showToast('⚠️ Vui lòng nhập họ tên', 'error'); return; }
+        currentUser = name;
+        document.getElementById('nameForm').style.display = 'none';
+        document.getElementById('quizSection').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.getElementById('userName').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') document.getElementById('startQuizBtn').click();
+    });
+
+    document.getElementById('calculateBtn').addEventListener('click', () => {
+        const result = calculateScores();
+        if (!result) return;
+        displayResult(result);
+        saveToLocalStorage(result);
+        showToast('✅ Đã tính điểm thành công!', 'success');
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', resetQuiz);
+});
+</script>
+</body>
+</html>
